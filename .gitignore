@@ -1,0 +1,13 @@
+.DS_Store
+log.txt
+env
+venv
+.state-save
+__pycache__
+.idea
+.env
+*.log
+*.db
+*.sqlite
+*.sqlite3
+*.pkl

@@ -1,9 +1,40 @@
 {% extends 'eshop/base.html' %}
 
 {% block title %}
-Product Detail
+Product #{{ product.pk }}
 {% endblock %}
 
 {% block body %}
-<h3>Product Detail</h3>
+<h3>Product <strong>{{ product.name }}</strong></h3>
+<div>
+  <div>Description: <em>{{ product.description }}</em></div>
+  <div>Price: {{ product.price }}</div>
+  <div>Discount: {{ product.discount }}</div>
+  <div>Archived: {{ product.archived }}</div>
+
+  {% if product.preview %}
+  <img src="{{ product.preview.url }}" alt="{{ product.preview.name }}">
+  {% endif %}
+
+  <h4>Images</h4>
+  <div>
+  {% for x in product.images.all %}
+    <div>
+      <img src="{{ x.image.url }}" alt="{{ x.image.name }}">
+      <div>{{ x.description }}</div>
+    </div>
+  {% empty %}
+    <div>No images uploaded yet</div>
+  {% endfor %}
+  </div>
+</div>
+<div>
+  <a href="{% url 'eshop:product_update' pk=product.pk %}">Update</a>
+</div>
+<div>
+  <a href="{% url 'eshop:product_delete' pk=product.pk %}">Archive</a>
+</div>
+<div>
+  <a href="{% url('eshop:product_list') %}">Back to Product list</a>
+</div>
 {% endblock %}

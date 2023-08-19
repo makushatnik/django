@@ -1,0 +1,21 @@
+{% extends 'eshop/base.html' %}
+
+{% block title %}
+Confirm archive {{ object.name }}
+{% endblock %}
+
+{% block body %}
+<h3>Are you sure you wanna archive <strong>{{ object.name }}</strong>?</h3>
+<br>
+<div>
+  <a href="{% url 'eshop:product_detail' pk=object.pk %}">Back to this Product</a>
+</div>
+<br>
+<div>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Archive</button>
+  </form>
+</div>
+{% endblock %}

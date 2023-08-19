@@ -12,10 +12,14 @@ Product List
   <ul>
   {% for product in products %}
   <div>
-    <p>Name: {{ product.name }}</p>
+    <p>Name: <a href="{% url 'eshop:product:detail' pk=product.pk %}">{{ product.name }}</a></p>
     <p>Description: {{ product.description }}</p>
     <p>Price: {{ product.price }}</p>
     <p>Discount: {% firstof product.discount 'no discount' %}</p>
+
+    {% if product.preview %}
+    <img src="{{ product.preview.url }}" alt="{{ product.preview.name }}">
+    {% endif %}
   </div>
   {% endfor %}
   </ul>
@@ -24,5 +28,7 @@ Product List
 <h4>No products yet.</h4>
 {% endif %}
 
-{% lorem %}
+<div>
+  <a href="{% url 'eshop:product_create' %}">Create new</a>
+</div>
 {% endblock %}

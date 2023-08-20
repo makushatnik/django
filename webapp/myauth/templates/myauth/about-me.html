@@ -1,0 +1,18 @@
+{% extends 'eshop/base.html' %}
+
+{% block title %}
+About me
+{% endblock %}
+
+{% block body %}
+<h3>User info</h3>
+{% if user.is_authenticated %}
+  <h4>Details</h4>
+  <p>Username: {{ user.username }}</p>
+  <p>First name: {{ user.first_name }}</p>
+  <p>Last name: {{ user.last_name }}</p>
+  <p>Email: {{ user.email }}</p>
+{% else %}
+  <h4>User is anonymous</h4>
+{% endif %}
+{% endblock %}

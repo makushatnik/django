@@ -1,0 +1,25 @@
+{% extends 'eshop/base.html' %}
+
+{% block title %}
+Order #{{ order.pk }} details
+{% endblock %}
+
+{% block body %}
+<h3>Order #{{ order.pk }}</h3>
+<div>
+  <p>Made by: {% firstof order.user.first_name order.user.username %}</p>
+  <p>Promocode: {{ order.promocode }}</p>
+  <p>Delivery address: {{ order.delivery_address }}</p>
+  <div>
+    Items:
+    <ul>
+    {% for product in order.products.all %}
+      <li>{{ product.name }} for {{ product.price }}</li>
+    {% endfor %}
+    </ul>
+  </div>
+</div>
+<div>
+  <a href="{% url('eshop:order:list') %}">Back to order list</a>
+</div>
+{% endblock %}

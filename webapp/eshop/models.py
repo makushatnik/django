@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.urls import reverse
 
 
 def product_preview_path(instance: "Product", filename: str) -> str:
@@ -38,11 +39,11 @@ class Product(models.Model):
     class Meta:
         ordering = ["name"]
 
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, db_index=True)
     category = models.ForeignKey(Category, on_delete=models.PROTECT)
-    description = models.TextField(null=False, blank=True)
+    description = models.TextField(null=False, blank=True, db_index=True)
     seller = models.ForeignKey(Seller, on_delete=models.PROTECT)
-    price = models.DecimalField(default=0, max_digits=8, decimal_places=2)
+    price = models.DecimalField(default=0, max_digits=8, decimal_places=2, db_index=True)
     discount = models.SmallIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     preview = models.ImageField(null=True, blank=True, upload_to=product_preview_path)
@@ -53,6 +54,9 @@ class Product(models.Model):
         if len(self.description) < 48:
             return self.description
         return self.description[:48] + "..."
+
+    def get_absolute_url(self):
+        return reverse('eshop:product_details', kwargs={"pk": self.pk})
 
     def __str__(self) -> str:
         return f"Product(pk={self.pk}, name={self.name!r})"

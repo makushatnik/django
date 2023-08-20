@@ -1,9 +1,14 @@
 from django.contrib import admin
 from django.contrib.auth.models import User
 from django.db.models import QuerySet
-from django.http import HttpRequest
+from django.http import HttpRequest, HttpResponse
+from django.shortcuts import render, redirect
+from django.urls import path
 
+from .admin_mixins import ExportAsCSVMixin
+from .forms import CSVImportForm
 from .models import Product, ProductImage, Order, Item
+from .utils import save_csv_products
 
 
 def get_full_name(user: User):
@@ -31,10 +36,12 @@ def mark_unarchived(modeladmin: admin.ModelAdmin, request: HttpRequest, queryset
 
 
 @admin.register(Product)
-class ProductAdmin(admin.ModelAdmin):
+class ProductAdmin(admin.ModelAdmin, ExportAsCSVMixin):
+    change_list_template = 'eshop/products/changelist.html'
     actions = [
         mark_archived,
-        mark_unarchived
+        mark_unarchived,
+        "export_csv"
     ]
     inlines = [
         ProductInline
@@ -59,6 +66,25 @@ class ProductAdmin(admin.ModelAdmin):
             "classes": ("collapse",),
         })
     ]
+
+    def import_csv(self, request: HttpRequest) -> HttpResponse:
+        if request.method == "GET":
+            form = CSVImportForm()
+            return render(request, 'admin/csv_form.html', {"form": form})
+        form = CSVImportForm(request.POST, request.FILES)
+        if not form.is_valid():
+            return render(request, 'admin/csv_form.html', {"form": form}, status=400)
+
+        save_csv_products(form.files["csv_file"].file, request.encoding)
+        self.message_user(request, 'Data from CSV were imported')
+        return redirect('..')
+
+    def get_urls(self):
+        urls = super().get_urls()
+        new_urls = [
+            path('import-products-csv/', self.import_csv, name='import_products_csv')
+        ]
+        return new_urls + urls
 
 
 @admin.register(Item)

@@ -38,3 +38,6 @@ class ProductForm(forms.ModelForm):
         required=False
     )
 
+
+class CSVImportForm(forms.Form):
+    csv_file = forms.FileField()
